@@ -28,6 +28,37 @@ class MasterControlGraph:
                 return transition["trigger"]
         raise ValueError(f"No trigger found for transition from {source_state} to {dest_state}")
 
+    def _perform_temporal_orientation(self) -> str:
+        """
+        Performs research on the current state of relevant technologies
+        and saves the findings to the knowledge core.
+        """
+        print("  - Executing Temporal Orientation...")
+        orientation_topics = [
+            "latest stable version of Next.js",
+            "React Hooks best practices 2025",
+            "current state of tailwindcss",
+            "jsonschema python library latest version"
+        ]
+
+        orientation_findings = []
+        for topic in orientation_topics:
+            print(f"    - Researching: {topic}")
+            constraints = {"target": "external_web", "scope": "narrow", "query": topic}
+            result = execute_research_protocol(constraints)
+            # A real implementation would parse and synthesize these results
+            orientation_findings.append(f"### {topic.title()}\n\n{result}\n\n---\n")
+
+        report = "\n".join(orientation_findings)
+
+        try:
+            with open("knowledge_core/temporal_orientation.md", "w") as f:
+                f.write("# Temporal Orientation Cache\n\n")
+                f.write(report)
+            return f"Temporal orientation complete. Findings saved to knowledge_core/temporal_orientation.md"
+        except Exception as e:
+            return f"Error saving temporal orientation findings: {e}"
+
     def do_orientation(self, agent_state: AgentState) -> str:
         """Executes the L1, L2, and L3 orientation steps."""
         print("[MasterControl] State: ORIENTING")
@@ -54,6 +85,10 @@ class MasterControlGraph:
             agent_state.vm_capability_report = report
             agent_state.messages.append({"role": "system", "content": f"L3 Orientation Complete. {report}"})
 
+            # L4: Temporal Orientation
+            temporal_report = self._perform_temporal_orientation()
+            agent_state.messages.append({"role": "system", "content": temporal_report})
+
             agent_state.orientation_complete = True
             print("[MasterControl] Orientation Succeeded.")
             return self.get_trigger("ORIENTING", "PLANNING")
@@ -73,36 +108,45 @@ class MasterControlGraph:
         return self.get_trigger("PLANNING", "EXECUTING")
 
     def do_execution(self, agent_state: AgentState) -> str:
-        """Executes the plan step by step."""
+        """Executes the plan step by step, only running command-like lines."""
         print("[MasterControl] State: EXECUTING")
 
         try:
-            plan_steps = [line for line in agent_state.plan.split('\n') if line.strip()]
+            plan_lines = agent_state.plan.split('\n')
 
-            if agent_state.current_step_index < len(plan_steps):
-                step = plan_steps[agent_state.current_step_index].strip()
-                print(f"  - Executing step {agent_state.current_step_index + 1}: {step}")
-
-                result = subprocess.run(step, shell=True, check=True, capture_output=True, text=True)
-
-                output = result.stdout.strip()
-                if result.stderr:
-                    output += "\nStderr:\n" + result.stderr.strip()
-
-                print(f"  - Output: {output}")
-
-                agent_state.messages.append({
-                    "role": "system",
-                    "content": f"Successfully executed step: {step}\nOutput:\n{output}"
-                })
-
+            while agent_state.current_step_index < len(plan_lines):
+                step = plan_lines[agent_state.current_step_index].strip()
                 agent_state.current_step_index += 1
-                return self.get_trigger("EXECUTING", "EXECUTING")
-            else:
-                print("[MasterControl] Execution Complete.")
-                return self.get_trigger("EXECUTING", "POST_MORTEM")
+
+                # Heuristic to find executable actions within the markdown plan
+                if step.lower().startswith(("*   **action:**", "```bash")):
+                    command_to_run = step.split(":", 1)[-1].strip().strip("`")
+
+                    print(f"  - Executing command from step {agent_state.current_step_index}: {command_to_run}")
+
+                    result = subprocess.run(command_to_run, shell=True, check=True, capture_output=True, text=True)
+
+                    output = result.stdout.strip()
+                    if result.stderr:
+                        output += "\nStderr:\n" + result.stderr.strip()
+
+                    print(f"  - Output: {output}")
+
+                    agent_state.messages.append({
+                        "role": "system",
+                        "content": f"Successfully executed step: {command_to_run}\nOutput:\n{output}"
+                    })
+                else:
+                    # This line is not a command, just a plan instruction. Log it and move on.
+                    print(f"  - Acknowledging non-executable step {agent_state.current_step_index}: {step}")
+                    agent_state.messages.append({"role": "system", "content": f"Acknowledged plan step: {step}"})
+
+            # If we've gone through all lines, execution is complete
+            print("[MasterControl] Execution Complete.")
+            return self.get_trigger("EXECUTING", "POST_MORTEM")
+
         except subprocess.CalledProcessError as e:
-            error_message = f"Execution failed at step {agent_state.current_step_index + 1}: {e.cmd}\nStderr: {e.stderr}"
+            error_message = f"Execution failed at step {agent_state.current_step_index}: {e.cmd}\nStderr: {e.stderr}"
             agent_state.error = error_message
             print(f"[MasterControl] {error_message}")
             return self.get_trigger("EXECUTING", "ERROR")
