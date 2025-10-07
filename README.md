@@ -278,7 +278,7 @@ Or modify the duration in your route file:
 
 ```typescript
 // In app/api/report/route.ts
-export const maxDuration = 120; // Set to 120 seconds or higher
+export const maxDuration = 120 // Set to 120 seconds or higher
 ```
 
 Note: The maximum duration limit may vary based on your hosting platform and subscription tier.
@@ -408,32 +408,35 @@ docker run -p 3000:3000 open-deep-research
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
-## Development
+## Agent-Centric Development
 
-This project is equipped with a development toolchain that automates code formatting and quality checks. These tools are designed to ensure consistency and maintainability across the codebase.
+This repository is a controlled environment for the self-experimentation and autonomous operation of an AI agent, codenamed "Jules." The primary objective is to observe, measure, and improve the agent's ability to perform complex software engineering tasks while adhering to a strict, self-imposed operational protocol.
 
-### Automated Formatting and Linting
+### The Agent Protocol (Agent.md)
 
-We use [Prettier](https://prettier.io/) for code formatting and [ESLint](https://eslint.org/) for linting. These tools are configured to run automatically before each commit, so you don't have to worry about manual formatting.
+All operations within this repository are governed by the Jules Agent Protocol v3.0, detailed in `Agent.md`. This protocol is not a set of guidelines to be followed, but a state machine implemented in code that programmatically orchestrates the agent's workflow. It mandates a structured approach to:
+- **Temporal Orientation**: Overcoming knowledge cutoffs by consulting external, up-to-date information.
+- **Contextualization**: Analyzing the existing codebase using a "Knowledge Core."
+- **Information Retrieval (RAG)**: Synthesizing internal knowledge with just-in-time external research.
+- **Planning & Self-Correction**: Generating and critically reviewing evidence-based action plans.
+- **Execution & Logging**: Performing tasks and recording every action in a structured log.
+- **Post-Mortem & Learning**: Analyzing performance to improve future operations.
 
-### Pre-Commit Hooks
+### Repository Structure
 
-Pre-commit hooks are managed with [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/okonet/lint-staged). When you commit your changes, `lint-staged` will automatically run Prettier and ESLint on the staged files. This ensures that only properly formatted and lint-free code is committed.
+The repository is organized to support the agent's protocol:
+- **Agent.md**: The master protocol document that dictates all agent behavior.
+- **knowledge_core/**: The agent's internal knowledge base.
+- **logs/**: Contains operational logs.
+- **postmortems/**: Contains post-task self-analysis reports.
+- **tooling/**: Contains the FSM-based tooling that enforces the protocol.
+- **run.py**: The entry point for all agent tasks.
 
-### Manual Formatting
+This structure is designed to be created and maintained by the agent itself, as part of its initialization and operational directives. To initiate a task, use the following command:
 
-If you need to format the entire codebase manually, you can use the following scripts:
-
-- **Format the code**:
-
-  ```bash
-  npm run format
-  ```
-
-- **Check for formatting issues**:
-  ```bash
-  npm run format:check
-  ```
+```bash
+python run.py "Your task description here"
+```
 
 ### Getting API Keys
 
@@ -448,6 +451,7 @@ If you need to format the entire codebase manually, you can use the following sc
 You'll need two components to use Google Custom Search:
 
 1. **Get API Key**:
+
    - Visit [Get a Key](https://developers.google.com/custom-search/v1/introduction) page
    - Follow the prompts to get your API key
    - Copy it for the `GOOGLE_SEARCH_API_KEY` environment variable

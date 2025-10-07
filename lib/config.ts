@@ -12,12 +12,12 @@ export const CONFIG = {
   search: {
     resultsPerPage: 10,
     maxSelectableResults: 3,
-    provider: "google" as "google" | "bing" | "exa", // Default search provider
+    provider: 'google' as 'google' | 'bing' | 'exa', // Default search provider
     safeSearch: {
-      google: "active" as "active" | "off",
-      bing: "moderate" as "moderate" | "strict" | "off",
+      google: 'active' as 'active' | 'off',
+      bing: 'moderate' as 'moderate' | 'strict' | 'off',
     },
-    market: "en-US",
+    market: 'en-US',
   },
 
   // AI Platform settings
@@ -25,56 +25,56 @@ export const CONFIG = {
     google: {
       enabled: true,
       models: {
-        "gemini-flash": {
+        'gemini-flash': {
           enabled: true,
-          label: "Gemini Flash",
+          label: 'Gemini Flash',
         },
-        "gemini-flash-thinking": {
+        'gemini-flash-thinking': {
           enabled: true,
-          label: "Gemini Flash Thinking",
+          label: 'Gemini Flash Thinking',
         },
-        "gemini-exp": {
+        'gemini-exp': {
           enabled: false,
-          label: "Gemini Exp",
+          label: 'Gemini Exp',
         },
       },
     },
     ollama: {
       enabled: true,
       models: {
-        "deepseek-r1:1.5b": {
+        'deepseek-r1:1.5b': {
           enabled: false,
-          label: "DeepSeek R1 1.5B",
+          label: 'DeepSeek R1 1.5B',
         },
       },
     },
     openai: {
       enabled: true,
       models: {
-        "gpt-4o": {
+        'gpt-4o': {
           enabled: false,
-          label: "GPT-4o",
+          label: 'GPT-4o',
         },
-        "o1-mini": {
+        'o1-mini': {
           enabled: false,
-          label: "o1-mini",
+          label: 'o1-mini',
         },
         o1: {
           enabled: false,
-          label: "o1",
+          label: 'o1',
         },
       },
     },
     anthropic: {
       enabled: true,
       models: {
-        "claude-3-7-sonnet-latest": {
+        'claude-3-7-sonnet-latest': {
           enabled: false,
-          label: "Claude 3.7 Sonnet",
+          label: 'Claude 3.7 Sonnet',
         },
-        "claude-3-5-haiku-latest": {
+        'claude-3-5-haiku-latest': {
           enabled: false,
-          label: "Claude 3.5 Haiku",
+          label: 'Claude 3.5 Haiku',
         },
       },
     },
@@ -83,22 +83,22 @@ export const CONFIG = {
       models: {
         chat: {
           enabled: false,
-          label: "Chat",
+          label: 'Chat',
         },
         reasoner: {
           enabled: false,
-          label: "Reasoner",
+          label: 'Reasoner',
         },
       },
     },
     openrouter: {
       enabled: true,
       models: {
-        "openrouter/auto": {
+        'openrouter/auto': {
           enabled: false,
-          label: "Auto",
+          label: 'Auto',
         },
       },
     },
   },
-} as const;
+} as const

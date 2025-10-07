@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   Select,
@@ -6,15 +6,15 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import type { PlatformModel } from "@/types";
-import { CONFIG } from "@/lib/config";
+} from '@/components/ui/select'
+import type { PlatformModel } from '@/types'
+import { CONFIG } from '@/lib/config'
 
-const DEFAULT_MODEL = "google__gemini-flash";
+const DEFAULT_MODEL = 'google__gemini-flash'
 
 export const platformModels = Object.entries(CONFIG.platforms)
   .flatMap(([platform, config]) => {
-    if (!config.enabled) return [];
+    if (!config.enabled) return []
 
     return Object.entries(config.models).map(([modelId, modelConfig]) => {
       return {
@@ -24,15 +24,15 @@ export const platformModels = Object.entries(CONFIG.platforms)
         }`,
         platform,
         disabled: !modelConfig.enabled,
-      };
-    });
+      }
+    })
   })
-  .filter(Boolean) as (PlatformModel & { disabled: boolean })[];
+  .filter(Boolean) as (PlatformModel & { disabled: boolean })[]
 
 interface ModelSelectProps {
-  value: string;
-  onValueChange: (value: string) => void;
-  triggerClassName?: string;
+  value: string
+  onValueChange: (value: string) => void
+  triggerClassName?: string
 }
 
 export function ModelSelect({
@@ -49,7 +49,7 @@ export function ModelSelect({
       <SelectTrigger className={triggerClassName}>
         <SelectValue
           placeholder={
-            platformModels.length === 0 ? "No models available" : "Select model"
+            platformModels.length === 0 ? 'No models available' : 'Select model'
           }
         />
       </SelectTrigger>
@@ -59,14 +59,14 @@ export function ModelSelect({
             key={model.value}
             value={model.value}
             disabled={model.disabled}
-            className={model.disabled ? "text-gray-400 cursor-not-allowed" : ""}
+            className={model.disabled ? 'text-gray-400 cursor-not-allowed' : ''}
           >
             {model.label}
           </SelectItem>
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }
 
-export { DEFAULT_MODEL };
+export { DEFAULT_MODEL }

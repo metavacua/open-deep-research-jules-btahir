@@ -31,17 +31,20 @@ The Open Deep Research platform now includes a project management system that al
 The project management system is built on:
 
 1. `useFlowProjects` Hook:
+
    - Manages project state using localStorage
    - Provides functions for creating, updating, and deleting projects
    - Handles automatic saving of project state
    - Monitors localStorage usage
 
 2. `ProjectSelector` Component:
+
    - Provides a user interface for project management
    - Displays a list of available projects with timestamps
    - Includes dialogs for creating and deleting projects
 
 3. `ProjectActions` Component:
+
    - Handles import and export functionality
    - Shows storage usage information
    - Provides warnings when storage is running low
@@ -56,13 +59,13 @@ Each project contains:
 
 ```typescript
 interface FlowProject {
-  id: string; // Unique identifier
-  name: string; // User-defined project name
-  createdAt: string; // Creation timestamp
-  updatedAt: string; // Last update timestamp
-  nodes: Node[]; // ReactFlow nodes
-  edges: Edge[]; // ReactFlow edges
-  query: string; // Research query
+  id: string // Unique identifier
+  name: string // User-defined project name
+  createdAt: string // Creation timestamp
+  updatedAt: string // Last update timestamp
+  nodes: Node[] // ReactFlow nodes
+  edges: Edge[] // ReactFlow edges
+  query: string // Research query
 }
 ```
 
