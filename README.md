@@ -408,6 +408,36 @@ docker run -p 3000:3000 open-deep-research
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
+## Agent-Centric Development
+
+This repository is a controlled environment for the self-experimentation and autonomous operation of an AI agent, codenamed "Jules." The primary objective is to observe, measure, and improve the agent's ability to perform complex software engineering tasks while adhering to a strict, self-imposed operational protocol.
+
+### The Agent Protocol (Agent.md)
+
+All operations within this repository are governed by the Jules Agent Protocol v3.0, detailed in `Agent.md`. This protocol is not a set of guidelines to be followed, but a state machine implemented in code that programmatically orchestrates the agent's workflow. It mandates a structured approach to:
+- **Temporal Orientation**: Overcoming knowledge cutoffs by consulting external, up-to-date information.
+- **Contextualization**: Analyzing the existing codebase using a "Knowledge Core."
+- **Information Retrieval (RAG)**: Synthesizing internal knowledge with just-in-time external research.
+- **Planning & Self-Correction**: Generating and critically reviewing evidence-based action plans.
+- **Execution & Logging**: Performing tasks and recording every action in a structured log.
+- **Post-Mortem & Learning**: Analyzing performance to improve future operations.
+
+### Repository Structure
+
+The repository is organized to support the agent's protocol:
+- **Agent.md**: The master protocol document that dictates all agent behavior.
+- **knowledge_core/**: The agent's internal knowledge base.
+- **logs/**: Contains operational logs.
+- **postmortems/**: Contains post-task self-analysis reports.
+- **tooling/**: Contains the FSM-based tooling that enforces the protocol.
+- **run.py**: The entry point for all agent tasks.
+
+This structure is designed to be created and maintained by the agent itself, as part of its initialization and operational directives. To initiate a task, use the following command:
+
+```bash
+python run.py "Your task description here"
+```
+
 ### Getting API Keys
 
 #### Azure Bing Search API

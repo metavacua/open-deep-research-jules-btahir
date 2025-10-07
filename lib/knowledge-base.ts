@@ -26,7 +26,7 @@ export function getKnowledgeBaseReports(): KnowledgeBaseReport[] {
   try {
     const reportsJson = localStorage.getItem(KNOWLEDGE_BASE_KEY)
     if (!reportsJson) return []
-    
+
     const reports = JSON.parse(reportsJson) as KnowledgeBaseReport[]
     return reports.sort((a, b) => b.timestamp - a.timestamp)
   } catch (error) {
@@ -51,7 +51,7 @@ export function deleteFromKnowledgeBase(reportId: string): boolean {
 export function searchKnowledgeBase(query: string): KnowledgeBaseReport[] {
   try {
     const reports = getKnowledgeBaseReports()
-    
+
     // Simple search implementation - can be enhanced with better search logic
     const searchTerms = query.toLowerCase().split(' ')
     return reports.filter(report => {
@@ -62,4 +62,4 @@ export function searchKnowledgeBase(query: string): KnowledgeBaseReport[] {
     console.error('Failed to search knowledge base:', error)
     return []
   }
-} 
+}

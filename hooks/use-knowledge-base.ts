@@ -76,4 +76,4 @@ export function useKnowledgeBase() {
     searchReports,
     clearAllReports,
   }
-} 
+}
