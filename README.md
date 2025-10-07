@@ -278,7 +278,7 @@ Or modify the duration in your route file:
 
 ```typescript
 // In app/api/report/route.ts
-export const maxDuration = 120 // Set to 120 seconds or higher
+export const maxDuration = 120; // Set to 120 seconds or higher
 ```
 
 Note: The maximum duration limit may vary based on your hosting platform and subscription tier.
@@ -408,6 +408,33 @@ docker run -p 3000:3000 open-deep-research
 
 The application will be available at [http://localhost:3000](http://localhost:3000).
 
+## Development
+
+This project is equipped with a development toolchain that automates code formatting and quality checks. These tools are designed to ensure consistency and maintainability across the codebase.
+
+### Automated Formatting and Linting
+
+We use [Prettier](https://prettier.io/) for code formatting and [ESLint](https://eslint.org/) for linting. These tools are configured to run automatically before each commit, so you don't have to worry about manual formatting.
+
+### Pre-Commit Hooks
+
+Pre-commit hooks are managed with [Husky](https://typicode.github.io/husky/) and [lint-staged](https://github.com/okonet/lint-staged). When you commit your changes, `lint-staged` will automatically run Prettier and ESLint on the staged files. This ensures that only properly formatted and lint-free code is committed.
+
+### Manual Formatting
+
+If you need to format the entire codebase manually, you can use the following scripts:
+
+- **Format the code**:
+
+  ```bash
+  npm run format
+  ```
+
+- **Check for formatting issues**:
+  ```bash
+  npm run format:check
+  ```
+
 ### Getting API Keys
 
 #### Azure Bing Search API
@@ -421,7 +448,6 @@ The application will be available at [http://localhost:3000](http://localhost:30
 You'll need two components to use Google Custom Search:
 
 1. **Get API Key**:
-
    - Visit [Get a Key](https://developers.google.com/custom-search/v1/introduction) page
    - Follow the prompts to get your API key
    - Copy it for the `GOOGLE_SEARCH_API_KEY` environment variable

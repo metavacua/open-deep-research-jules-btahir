@@ -1,41 +1,41 @@
-import type { Viewport } from '@xyflow/react'
-import type { FlowProject } from '@/hooks/use-flow-projects'
+import type { Viewport } from "@xyflow/react";
+import type { FlowProject } from "@/hooks/use-flow-projects";
 
 /**
  * Gets the current localStorage usage in bytes and as a percentage of the available space
  */
 export function getLocalStorageUsage(): {
-  usage: number // Size in bytes
-  usagePercent: number // Percentage of available space
-  available: number // Estimated available space in bytes
-  limit: number // Estimated limit in bytes
+  usage: number; // Size in bytes
+  usagePercent: number; // Percentage of available space
+  available: number; // Estimated available space in bytes
+  limit: number; // Estimated limit in bytes
 } {
   try {
     // Current usage
-    let totalSize = 0
+    let totalSize = 0;
     for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i) || ''
-      const value = localStorage.getItem(key) || ''
-      totalSize += (key.length + value.length) * 2 // UTF-16 uses 2 bytes per character
+      const key = localStorage.key(i) || "";
+      const value = localStorage.getItem(key) || "";
+      totalSize += (key.length + value.length) * 2; // UTF-16 uses 2 bytes per character
     }
 
     // Estimate of localStorage limit (typically around 5MB)
-    const estimatedLimit = 5 * 1024 * 1024 // 5MB in bytes
+    const estimatedLimit = 5 * 1024 * 1024; // 5MB in bytes
 
     return {
       usage: totalSize,
       usagePercent: (totalSize / estimatedLimit) * 100,
       available: Math.max(0, estimatedLimit - totalSize),
       limit: estimatedLimit,
-    }
+    };
   } catch (error) {
-    console.error('Error calculating localStorage usage:', error)
+    console.error("Error calculating localStorage usage:", error);
     return {
       usage: 0,
       usagePercent: 0,
       available: 0,
       limit: 0,
-    }
+    };
   }
 }
 
@@ -43,21 +43,23 @@ export function getLocalStorageUsage(): {
  * Formats bytes into a human-readable string (KB, MB)
  */
 export function formatBytes(bytes: number, decimals = 2): string {
-  if (bytes === 0) return '0 Bytes'
+  if (bytes === 0) return "0 Bytes";
 
-  const k = 1024
-  const sizes = ['Bytes', 'KB', 'MB']
-  const i = Math.floor(Math.log(bytes) / Math.log(k))
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + ' ' + sizes[i]
+  return (
+    parseFloat((bytes / Math.pow(k, i)).toFixed(decimals)) + " " + sizes[i]
+  );
 }
 
 /**
  * Clears all flow projects from localStorage
  */
 export function clearAllFlowProjects(): void {
-  localStorage.removeItem('open-deep-research-flow-projects')
-  localStorage.removeItem('open-deep-research-current-project')
+  localStorage.removeItem("open-deep-research-flow-projects");
+  localStorage.removeItem("open-deep-research-current-project");
 }
 
 /**
@@ -65,8 +67,8 @@ export function clearAllFlowProjects(): void {
  */
 export function exportFlowProjects(): string {
   const projects =
-    localStorage.getItem('open-deep-research-flow-projects') || '[]'
-  return projects
+    localStorage.getItem("open-deep-research-flow-projects") || "[]";
+  return projects;
 }
 
 /**
@@ -76,10 +78,10 @@ export function exportFlowProjects(): string {
 export function importFlowProjects(jsonProjects: string): boolean {
   try {
     // Validate JSON format
-    const projects = JSON.parse(jsonProjects)
+    const projects = JSON.parse(jsonProjects);
 
     if (!Array.isArray(projects)) {
-      throw new Error('Invalid project data structure')
+      throw new Error("Invalid project data structure");
     }
 
     // Check if projects have the required structure
@@ -90,28 +92,28 @@ export function importFlowProjects(jsonProjects: string): boolean {
         !project.createdAt ||
         !project.updatedAt
       ) {
-        throw new Error('Invalid project data format')
+        throw new Error("Invalid project data format");
       }
     }
 
     // Save to localStorage
-    localStorage.setItem('open-deep-research-flow-projects', jsonProjects)
+    localStorage.setItem("open-deep-research-flow-projects", jsonProjects);
 
     // If there's a current project ID, verify it still exists in the imported data
     const currentProjectId = localStorage.getItem(
-      'open-deep-research-current-project'
-    )
+      "open-deep-research-current-project"
+    );
     if (currentProjectId) {
-      const exists = projects.some((p: any) => p.id === currentProjectId)
+      const exists = projects.some((p: any) => p.id === currentProjectId);
       if (!exists) {
-        localStorage.removeItem('open-deep-research-current-project')
+        localStorage.removeItem("open-deep-research-current-project");
       }
     }
 
-    return true
+    return true;
   } catch (error) {
-    console.error('Failed to import projects:', error)
-    return false
+    console.error("Failed to import projects:", error);
+    return false;
   }
 }
 
@@ -122,18 +124,18 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout | null = null
+  let timeout: NodeJS.Timeout | null = null;
 
   return function (...args: Parameters<T>) {
     if (timeout) {
-      clearTimeout(timeout)
+      clearTimeout(timeout);
     }
 
     timeout = setTimeout(() => {
-      func(...args)
-      timeout = null
-    }, wait)
-  }
+      func(...args);
+      timeout = null;
+    }, wait);
+  };
 }
 
 /**
@@ -142,16 +144,16 @@ export function debounce<T extends (...args: any[]) => any>(
 export function saveViewportToProject(
   project: FlowProject | null,
   viewport: Viewport,
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void
 ): void {
-  if (!project) return
+  if (!project) return;
 
   try {
     updateProject({
       viewport,
-    })
+    });
   } catch (error) {
-    console.error('Failed to save viewport to project:', error)
+    console.error("Failed to save viewport to project:", error);
   }
 }
 
@@ -162,14 +164,14 @@ export function restoreViewportFromProject(
   project: FlowProject | null,
   setViewport: (viewport: Viewport) => void
 ): boolean {
-  if (!project?.viewport) return false
+  if (!project?.viewport) return false;
 
   try {
-    setViewport(project.viewport)
-    return true
+    setViewport(project.viewport);
+    return true;
   } catch (error) {
-    console.error('Failed to restore project viewport:', error)
-    return false
+    console.error("Failed to restore project viewport:", error);
+    return false;
   }
 }
 
@@ -179,12 +181,12 @@ export function restoreViewportFromProject(
 export function createDebouncedViewportSave(
   getViewport: () => Viewport,
   project: FlowProject | null,
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void,
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void,
   debounceTime: number = 500
 ): () => void {
   return debounce(() => {
-    saveViewportToProject(project, getViewport(), updateProject)
-  }, debounceTime)
+    saveViewportToProject(project, getViewport(), updateProject);
+  }, debounceTime);
 }
 
 /**
@@ -193,17 +195,17 @@ export function createDebouncedViewportSave(
 export function saveNodesToProject<NodeType extends { id: string }>(
   project: FlowProject | null,
   nodes: NodeType[],
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void
 ): void {
-  if (!project) return
+  if (!project) return;
 
   try {
     updateProject({
       nodes: nodes as any[],
-    })
-    console.log(`Nodes saved for project: ${project.name}`)
+    });
+    console.log(`Nodes saved for project: ${project.name}`);
   } catch (error) {
-    console.error('Failed to save nodes to project:', error)
+    console.error("Failed to save nodes to project:", error);
   }
 }
 
@@ -213,17 +215,17 @@ export function saveNodesToProject<NodeType extends { id: string }>(
 export function saveEdgesToProject<EdgeType extends { id: string }>(
   project: FlowProject | null,
   edges: EdgeType[],
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void
 ): void {
-  if (!project) return
+  if (!project) return;
 
   try {
     updateProject({
       edges: edges as any[],
-    })
-    console.log(`Edges saved for project: ${project.name}`)
+    });
+    console.log(`Edges saved for project: ${project.name}`);
   } catch (error) {
-    console.error('Failed to save edges to project:', error)
+    console.error("Failed to save edges to project:", error);
   }
 }
 
@@ -233,12 +235,12 @@ export function saveEdgesToProject<EdgeType extends { id: string }>(
 export function createDebouncedNodesSave<NodeType extends { id: string }>(
   getNodes: () => NodeType[],
   project: FlowProject | null,
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void,
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void,
   debounceTime: number = 500
 ): () => void {
   return debounce(() => {
-    saveNodesToProject(project, getNodes(), updateProject)
-  }, debounceTime)
+    saveNodesToProject(project, getNodes(), updateProject);
+  }, debounceTime);
 }
 
 /**
@@ -247,10 +249,10 @@ export function createDebouncedNodesSave<NodeType extends { id: string }>(
 export function createDebouncedEdgesSave<EdgeType extends { id: string }>(
   getEdges: () => EdgeType[],
   project: FlowProject | null,
-  updateProject: (data: Partial<Omit<FlowProject, 'id' | 'createdAt'>>) => void,
+  updateProject: (data: Partial<Omit<FlowProject, "id" | "createdAt">>) => void,
   debounceTime: number = 500
 ): () => void {
   return debounce(() => {
-    saveEdgesToProject(project, getEdges(), updateProject)
-  }, debounceTime)
+    saveEdgesToProject(project, getEdges(), updateProject);
+  }, debounceTime);
 }
