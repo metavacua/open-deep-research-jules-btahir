@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Any, List
-from tooling.lib.remote_helpers import generate_with_model
+from tooling.lib.helpers import generate_with_model
 
 def _create_prompt(reports: List[Dict[str, Any]], source_index: str) -> str:
     """Creates the prompt for the LLM to consolidate reports."""

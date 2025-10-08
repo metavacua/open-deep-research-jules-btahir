@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Any, List
-from tooling.lib.remote_helpers import generate_with_model, extract_and_parse_json
+from tooling.lib.helpers import generate_with_model, extract_and_parse_json
 
 def _create_prompt(articles: List[Dict[str, Any]], user_prompt: str) -> str:
     """Creates the system prompt for the LLM to generate the final report."""
