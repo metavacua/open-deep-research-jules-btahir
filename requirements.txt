@@ -6,3 +6,5 @@ openai
 anthropic
 ollama
 officeparserpy
+python-docx
+markdown-pdf
