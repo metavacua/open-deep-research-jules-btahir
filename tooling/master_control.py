@@ -6,7 +6,10 @@ import subprocess
 # Add tooling directory to path to import other tools
 sys.path.insert(0, './tooling')
 from state import AgentState
-from research import execute_research_protocol
+# --- Updated Imports ---
+from deep_research import execute_research_protocol
+from tooling.lib.filesystem import read_file, list_directory
+# --- End Updated Imports ---
 from research_planner import plan_deep_research
 from environmental_probe import probe_filesystem, probe_network, probe_environment_variables
 
@@ -44,10 +47,11 @@ class MasterControlGraph:
         orientation_findings = []
         for topic in orientation_topics:
             print(f"    - Researching: {topic}")
-            constraints = {"target": "external_web", "scope": "narrow", "query": topic}
-            result = execute_research_protocol(constraints)
-            # A real implementation would parse and synthesize these results
-            orientation_findings.append(f"### {topic.title()}\n\n{result}\n\n---\n")
+            # --- Updated call to use the new task-based orchestrator ---
+            constraints = {"task": "search", "query": topic, "provider": "google"}
+            result_json = execute_research_protocol(constraints)
+            # --- End Updated call ---
+            orientation_findings.append(f"### {topic.title()}\n\n{result_json}\n\n---\n")
 
         report = "\n".join(orientation_findings)
 
@@ -65,14 +69,16 @@ class MasterControlGraph:
         try:
             # L1: Self-Awareness
             print("  - Executing L1: Self-Awareness...")
-            l1_constraints = {"target": "local_filesystem", "scope": "file", "path": "knowledge_core/agent_meta.json"}
-            agent_meta = execute_research_protocol(l1_constraints)
+            # --- Updated call to use the new filesystem helper ---
+            agent_meta = read_file("knowledge_core/agent_meta.json")
+            # --- End Updated call ---
             agent_state.messages.append({"role": "system", "content": f"L1 Orientation Complete. Agent Meta: {agent_meta[:100]}..."})
 
             # L2: Repo Sync
             print("  - Executing L2: Repository Sync...")
-            l2_constraints = {"target": "local_filesystem", "scope": "directory", "path": "knowledge_core/"}
-            repo_state = execute_research_protocol(l2_constraints)
+            # --- Updated call to use the new filesystem helper ---
+            repo_state = list_directory("knowledge_core/")
+            # --- End Updated call ---
             agent_state.messages.append({"role": "system", "content": f"L2 Orientation Complete. Repo State: {repo_state[:100]}..."})
 
             # L3: Environmental Probe
