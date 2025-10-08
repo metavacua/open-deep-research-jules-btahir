@@ -3,11 +3,6 @@ import os
 import requests
 from typing import Dict, Any
 import argparse
-import google.generativeai as genai
-from openai import OpenAI
-import anthropic
-import ollama
-import re
 
 # --- Configuration (ported from lib/config.ts) ---
 CONFIG = {
@@ -113,140 +108,23 @@ def search_exa(query: str) -> str:
     except requests.exceptions.RequestException as e:
         return json.dumps({"error": f"Error during Exa search: {e}"})
 
-# --- Report Generation Functions ---
-def generate_system_prompt(articles, user_prompt):
-    return f"""You are a research assistant...""" # Truncated for brevity
-
-def extract_and_parse_json(response: str) -> Dict:
-    try:
-        return json.loads(response)
-    except json.JSONDecodeError:
-        pass
-
-    code_block_match = re.search(r"```(?:json)?\s*([\s\S]*?)```", response)
-    if code_block_match:
-        try:
-            return json.loads(code_block_match.group(1))
-        except json.JSONDecodeError:
-            pass
-
-    try:
-        start_index = response.index("{")
-        end_index = response.rindex("}") + 1
-        return json.loads(response[start_index:end_index])
-    except (ValueError, json.JSONDecodeError):
-        pass
-
-    raise ValueError("No valid JSON found in response")
-
-def generate_with_gemini(system_prompt: str, model_name: str) -> str:
-    # ... (implementation from previous step)
-    pass
-
-def generate_with_openai(system_prompt: str, model_name: str) -> str:
-    # ... (implementation from previous step)
-    pass
-
-def generate_with_anthropic(system_prompt: str, model_name: str) -> str:
-    # ... (implementation from previous step)
-    pass
-
-def generate_with_ollama(system_prompt: str, model_name: str) -> str:
-    # ... (implementation from previous step)
-    pass
-
-def generate_with_model(system_prompt: str, platform_model: str) -> str:
-    platform, model = platform_model.split('__')
-    if platform == "google": return generate_with_gemini(system_prompt, model)
-    if platform == "openai": return generate_with_openai(system_prompt, model)
-    if platform == "anthropic": return generate_with_anthropic(system_prompt, model)
-    if platform == "ollama": return generate_with_ollama(system_prompt, model)
-    raise ValueError("Invalid platform specified")
-
-# --- Main Execution Logic ---
-def execute_research_protocol(constraints: Dict[str, Any]) -> str:
-    target = constraints.get("target")
-    scope = constraints.get("scope")
-    path = constraints.get("path")
-    query = constraints.get("query")
-    results_for_report = constraints.get("results")
-    prompt = constraints.get("prompt")
-    model = constraints.get("model")
-    provider = constraints.get("provider", CONFIG['search']['provider'])
-    time_filter = constraints.get("time_filter", "all")
-
-    if target == "local_filesystem" and scope == "file":
-        if path and os.path.exists(path):
-            try:
-                with open(path, 'r') as f:
-                    return f.read()
-            except Exception as e:
-                return f"Error reading file {path}: {e}"
-        return f"Error: Path '{path}' not specified or does not exist for L1 research."
-
-    elif target == "local_filesystem" and scope == "directory":
-        if path and os.path.isdir(path):
-            try:
-                files = os.listdir(path)
-                return f"Directory listing for '{path}':\n" + "\n".join(files)
-            except Exception as e:
-                return f"Error listing directory {path}: {e}"
-        return f"Error: Path '{path}' not specified or is not a directory for L2 research."
-
-    elif target == "external_web" and scope == "narrow":
-        if not query:
-            return "Error: Query not specified for L3 research."
-
-        if provider == "google":
-            return search_google(query, time_filter)
-        elif provider == "bing":
-            return search_bing(query, time_filter)
-        elif provider == "exa":
-            return search_exa(query)
-        else:
-            return "Error: Invalid search provider specified."
-
-    elif target == "external_web" and scope == "broad":
-        if not results_for_report or not prompt or not model:
-            return "Error: 'results', 'prompt', and 'model' must be provided for L4 deep research."
-
-        system_prompt = generate_system_prompt(results_for_report, prompt)
-
-        try:
-            response = generate_with_model(system_prompt, model)
-            parsed_response = extract_and_parse_json(response)
-            return json.dumps(parsed_response)
-        except Exception as e:
-            return f"Error during L4 deep research: {e}"
-
+def web_search(query: str, provider: str = CONFIG['search']['provider'], time_filter: str = "all") -> str:
+    if provider == "google":
+        return search_google(query, time_filter)
+    elif provider == "bing":
+        return search_bing(query, time_filter)
+    elif provider == "exa":
+        return search_exa(query)
     else:
-        return "Error: The provided constraints do not map to a recognized research level."
+        return json.dumps({"error": "Invalid search provider specified."})
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="A unified, constraint-based research tool.")
-    parser.add_argument("--target", required=True)
-    parser.add_argument("--scope", required=True)
-    parser.add_argument("--path")
-    parser.add_argument("--query")
-    parser.add_argument("--results")
-    parser.add_argument("--prompt")
-    parser.add_argument("--model")
-    parser.add_argument("--provider", default=CONFIG['search']['provider'])
-    parser.add_argument("--time_filter", default="all")
+    parser = argparse.ArgumentParser(description="A Python-native web search tool.")
+    parser.add_argument("--query", required=True, help="The search query.")
+    parser.add_argument("--provider", default=CONFIG['search']['provider'], help="The search provider to use (google, bing, exa).")
+    parser.add_argument("--time_filter", default="all", help="The time filter for the search (24h, week, month, year, all).")
 
     args = parser.parse_args()
 
-    constraints = {
-        "target": args.target,
-        "scope": args.scope,
-        "path": args.path,
-        "query": args.query,
-        "results": json.loads(args.results) if args.results else None,
-        "prompt": args.prompt,
-        "model": args.model,
-        "provider": args.provider,
-        "time_filter": args.time_filter,
-    }
-
-    result = execute_research_protocol(constraints)
+    result = web_search(query=args.query, provider=args.provider, time_filter=args.time_filter)
     print(result)
