@@ -5,3 +5,4 @@ google-generativeai
 openai
 anthropic
 ollama
+officeparserpy
