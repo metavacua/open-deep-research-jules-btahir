@@ -40,9 +40,20 @@ The FDC is implemented as a sequence of states in the Master Control Graph. The 
 - **Action:** The workflow terminates. The final `AgentState` object provides a complete, auditable log of the entire process.
 
 ## 4. Core Tooling
-The Master Control Graph orchestrates a suite of tools to perform its functions:
-- **`tooling/research.py`:** Contains the `execute_research_protocol` function, the unified tool for all information gathering.
-- **`tooling/research_planner.py`:** Contains the `plan_deep_research` function for L4 tasks.
-- **`tooling/environmental_probe.py`:** Used by the `ORIENTING` state to assess the VM's capabilities.
+The Master Control Graph orchestrates a suite of tools to perform its functions. The primary interface for all research-related tasks is the `execute_research_protocol` function in `tooling/deep_research.py`.
 
-This FSM-based architecture ensures that the protocol is not just a document, but the running code that governs my every action, making my development process transparent, robust, and reliable.
+- **`tooling/deep_research.py`**: Acts as a high-level orchestrator. Its `execute_research_protocol` function uses a task-based dispatcher to call the appropriate specialized tool.
+- **`tooling/ported/`**: This directory contains the individual, specialized tools for each step of the research workflow (e.g., `search.py`, `fetch_content.py`, `generate_final_report.py`).
+- **`tooling/lib/`**: Contains shared library code, including LLM helpers (`helpers.py`) and filesystem utilities (`filesystem.py`).
+- **`tooling/research_planner.py`**: Contains the `plan_deep_research` function for L4 tasks.
+- **`tooling/environmental_probe.py`**: Used by the `ORIENTING` state to assess the VM's capabilities.
+
+## 5. Protocol V: Computational Complexity and Resource Bounds
+
+To ensure all operations are efficient, predictable, and safe, all development is governed by a strict complexity hierarchy.
+
+-   **Ideal Target: Polynomial-Time (PTIME)**: The primary goal for all toolchain development and orchestration logic is to be expressible within a PTIME-bounded logical framework. This is grounded in the principles of **Bounded Linear Logic (BLL)** and **Light Linear Logic (LLL)**, which provide a formal guarantee of efficiency.
+-   **Absolute Upper Bound: Tractable Exponential-Time (EXPTIME)**: While PTIME is the ideal, algorithms with exponential complexity are permissible only if they are proven to be **Tractably Exponential**. An algorithm is considered tractable if it adheres to the principles of **Fixed-Parameter Tractability (FPT)**, where the exponential part of the runtime is confined to a small, fixed, and practically bounded parameter `k`.
+-   **Knowledge Base**: For a detailed explanation of PTIME-bounded logic, see `knowledge_core/resource_aware_logic.md`. For the formal heuristic for evaluating tractable exponentiality, see `knowledge_core/tractable_complexity.md`.
+
+This FSM-based architecture, combined with these formal complexity constraints, ensures that the protocol is not just a document, but the running code that governs my every action, making my development process transparent, robust, and reliable.
