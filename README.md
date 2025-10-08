@@ -1,531 +1,152 @@
-# Open Deep Research
+# Open Deep Research - Python Toolchain
 
 <div align="center">
-  <img src="demo.gif" alt="Open Deep Research Demo" width="800"/>
-  <p><em>Note: Demo is sped up for brevity</em></p>
+  <p>A powerful open-source research toolchain, ported from a Next.js application to a modular, backend-focused Python system.</p>
 </div>
 
-A powerful open-source research assistant that generates comprehensive AI-powered reports from web search results. Unlike other Deep Research solutions, it provides seamless integration with multiple AI platforms including Google, OpenAI, Anthropic, DeepSeek, and even local models - giving you the freedom to choose the perfect AI model for your specific research requirements.
-
-This app functions in three key steps:
-
-1. **Search Results Retrieval**: Using either Google Custom Search or Bing Search API (configurable), the app fetches comprehensive search results for the specified search term.
-2. **Content Extraction**: Leveraging JinaAI, it retrieves and processes the contents of the selected search results, ensuring accurate and relevant information.
-3. **Report Generation**: With the curated search results and extracted content, the app generates a detailed report using your chosen AI model (Gemini, GPT-4, Sonnet, etc.), providing insightful and synthesized output tailored to your custom prompts.
-4. **Knowledge Base**: Save and access your generated reports in a personal knowledge base for future reference and easy retrieval.
-
-Open Deep Research combines powerful tools to streamline research and report creation in a user-friendly, open-source platform. You can customize the app to your needs (select your preferred search provider, AI model, customize prompts, update rate limits, and configure the number of results both fetched and selected).
-
-## Features
-
-- 🔍 Flexible web search with Google or Bing APIs
-- ⏱️ Time-based filtering of search results
-- 📄 Content extraction from web pages
-- 🤖 Multi-platform AI support (Google Gemini, OpenAI GPT, Anthropic Sonnet)
-- 🎯 Flexible model selection with granular configuration
-- 📊 Multiple export formats (PDF, Word, Text)
-- 🧠 Knowledge Base for saving and accessing past reports
-- ⚡ Rate limiting for stability
-- 📱 Responsive design
-
-### Local File Support
-
-The app supports analyzing local files for research and report generation. You can:
-
-- Upload TXT, PDF, and DOCX files directly through the interface
-- Process local documents alongside web search results
-- Generate reports from local files without requiring web search
-- Combine insights from both local files and web sources
-
-To use local files:
-
-1. Click the upload button (⬆️) in the search interface
-2. Select your file (supported formats: TXT, PDF, DOCX)
-3. The file will appear as a custom source in your results
-4. Select it and click "Generate Report" to analyze its contents
-
-### Knowledge Base
-
-The Knowledge Base feature allows you to:
-
-- Save generated reports for future reference (reports are saved in the browser's local storage)
-- Access your research history
-- Quickly load and review past reports
-- Build a personal research library over time
-
-### Flow: Deep Research & Report Consolidation
-
-<div align="center">
-  <p><a href="https://www.loom.com/share/3c4d9811ac1d47eeaa7a0907c43aef7f">🎥 Watch the full demo video on Loom</a></p>
-</div>
-
-The Flow feature enables deep, recursive research by allowing you to:
-
-- Create visual research flows with interconnected reports
-- Generate follow-up queries based on initial research findings
-- Dive deeper into specific topics through recursive exploration
-- Consolidate multiple related reports into comprehensive final reports
-
-Key capabilities:
-
-- 🌳 **Deep Research Trees**: Start with a topic and automatically generate relevant follow-up questions to explore deeper aspects
-- 🔄 **Recursive Exploration**: Follow research paths down various "rabbit holes" by generating new queries from report insights
-- 🔍 **Visual Research Mapping**: See your entire research journey mapped out visually, showing connections between different research paths
-- 🎯 **Smart Query Generation**: AI-powered generation of follow-up research questions based on report content
-- 🔗 **Report Consolidation**: Select multiple related reports and combine them into a single, comprehensive final report
-- 📊 **Interactive Interface**: Drag, arrange, and organize your research flows visually
-
-The Flow interface makes it easy to:
-
-1. Start with an initial research query
-2. Review and select relevant search results
-3. Generate detailed reports from selected sources
-4. Get AI-suggested follow-up questions for deeper exploration
-5. Create new research branches from those questions
-6. Finally, consolidate related reports into comprehensive summaries
-
-This feature is perfect for:
-
-- Academic research requiring deep exploration of interconnected topics
-- Market research needing multiple angles of investigation
-- Complex topic analysis requiring recursive deep dives
-- Any research task where you need to "follow the thread" of information
-
-## Configuration
-
-The app's settings can be customized through the configuration file at `lib/config.ts`. Here are the key parameters you can adjust:
-
-### Rate Limits
-
-Control rate limiting and the number of requests allowed per minute for different operations:
-
-```typescript
-rateLimits: {
-  enabled: true,         // Enable/disable rate limiting (set to false to skip Redis setup)
-  search: 5,            // Search requests per minute
-  contentFetch: 20,     // Content fetch requests per minute
-  reportGeneration: 5,  // Report generation requests per minute
-}
-```
-
-Note: If you set `enabled: false`, you can run the application without setting up Redis. This is useful for local development or when you don't need rate limiting.
-
-### Search Provider Configuration
-
-The app supports both Google Custom Search and Bing Search APIs. You can configure your preferred search provider in `lib/config.ts`:
-
-```typescript
-search: {
-  resultsPerPage: 10,
-  maxSelectableResults: 3,
-  provider: 'google', // 'google' or 'bing'
-  safeSearch: {
-    google: 'active',  // 'active' or 'off'
-    bing: 'moderate'   // 'moderate', 'strict', or 'off'
-  },
-  market: 'en-US',
-}
-```
-
-To use Google Custom Search:
-
-1. Get your API key from [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a Custom Search Engine and get your CX ID from [Google Programmable Search](https://programmablesearchengine.google.com/)
-3. Add the credentials to your `.env.local` file:
-
-```bash
-GOOGLE_SEARCH_API_KEY="your-api-key"
-GOOGLE_SEARCH_CX="your-cx-id"
-```
-
-To use Bing Search:
-
-1. Get your API key from [Azure Portal](https://portal.azure.com/)
-2. Add the credential to your `.env.local` file:
-
-```bash
-AZURE_SUB_KEY="your-azure-key"
-```
-
-### Knowledge Base
-
-The Knowledge Base feature allows you to build a personal research library by:
-
-- Saving generated reports with their original search queries
-- Accessing and loading past reports instantly
-- Building a searchable archive of your research
-- Maintaining context across research sessions
-
-Reports saved to the Knowledge Base include:
-
-- The full report content with all sections
-- Original search query and prompt
-- Source URLs and references
-- Generation timestamp
-
-You can access your Knowledge Base through the dedicated button in the UI, which opens a sidebar containing all your saved reports.
-
-### AI Platform Settings
-
-Configure which AI platforms and models are available. The app supports multiple AI platforms (Google, OpenAI, Anthropic, DeepSeek) with various models for each platform. You can enable/disable platforms and individual models based on your needs:
-
-```typescript
-platforms: {
-  google: {
-    enabled: true,
-    models: {
-      'gemini-flash': {
-        enabled: true,
-        label: 'Gemini Flash',
-      },
-      'gemini-flash-thinking': {
-        enabled: true,
-        label: 'Gemini Flash Thinking',
-      },
-      'gemini-exp': {
-        enabled: false,
-        label: 'Gemini Exp',
-      },
-    },
-  },
-  openai: {
-    enabled: true,
-    models: {
-      'gpt-4o': {
-        enabled: false,
-        label: 'GPT-4o',
-      },
-      'o1-mini': {
-        enabled: false,
-        label: 'o1-mini',
-      },
-      'o1': {
-        enabled: false,
-        label: 'o1',
-      },
-    },
-  },
-  anthropic: {
-     enabled: true,
-    models: {
-      'claude-3-7-sonnet-latest': {
-        enabled: false,
-        label: 'Claude 3.7 Sonnet',
-      },
-      'claude-3-5-haiku-latest': {
-        enabled: false,
-        label: 'Claude 3.5 Haiku',
-      },
-    },
-  },
-  deepseek: {
-    enabled: true,
-    models: {
-      'chat': {
-        enabled: false,
-        label: 'DeepSeek V3',
-      },
-      'reasoner': {
-        enabled: false,
-        label: 'DeepSeek R1',
-      },
-    },
-  },
-  openrouter: {
-    enabled: true,
-    models: {
-      'openrouter/auto': {
-        enabled: false,
-        label: 'Auto',
-      },
-    },
-  },
-}
-```
-
-For each platform:
-
-- `enabled`: Controls whether the platform is available
-- For each model:
-  - `enabled`: Controls whether the specific model is selectable
-  - `label`: The display name shown in the UI
-
-Disabled models will appear grayed out in the UI but remain visible to show all available options. This allows users to see the full range of available models while clearly indicating which ones are currently accessible.
-
-To modify these settings, update the values in `lib/config.ts`. The changes will take effect after restarting the development server.
-
-### OpenRouter Integration
-
-OpenRouter provides access to various AI models through a unified API. By default, it's set to 'auto' mode which automatically selects the most suitable model, but you can configure it to use specific models of your choice by modifying the models section in the configuration.
-
-### Important Note for Reasoning Models
-
-When using advanced reasoning models like OpenAI's o1 or DeepSeek Reasoner, you may need to increase the serverless function duration limit as these models typically take longer to generate comprehensive reports. The default duration might not be sufficient.
-
-For Vercel deployments, you can increase the duration limit in your `vercel.json`:
-
-```json
-{
-  "functions": {
-    "app/api/report/route.ts": {
-      "maxDuration": 120
-    }
-  }
-}
-```
-
-Or modify the duration in your route file:
-
-```typescript
-// In app/api/report/route.ts
-export const maxDuration = 120 // Set to 120 seconds or higher
-```
-
-Note: The maximum duration limit may vary based on your hosting platform and subscription tier.
-
-### Local Models with Ollama
-
-The app supports local model inference through Ollama integration. You can:
-
-1. Install [Ollama](https://ollama.ai/) on your machine
-2. Pull your preferred models using `ollama pull model-name`
-3. Configure the model in `lib/config.ts`:
-
-```typescript
-platforms: {
-  ollama: {
-    enabled: true,
-    models: {
-      'your-model-name': {
-        enabled: true,
-        label: 'Your Model Display Name'
-      }
-    }
-  }
-}
-```
-
-Local models through Ollama bypass rate limiting since they run on your machine. This makes them perfect for development, testing, or when you need unlimited generations.
+This project is a comprehensive, Python-based research toolchain that generates in-depth reports from web searches and local documents. It provides a suite of modular tools that can be orchestrated to perform a complete research workflow, from initial query optimization to final report generation in various formats (PDF, DOCX, TXT).
+
+The toolchain is designed to be used as a backend system or as a library for an AI agent. It supports multiple AI platforms (Google, OpenAI, Anthropic, Ollama) and search providers (Google, Bing, Exa), giving you the freedom to choose the perfect model and data source for your research requirements.
+
+## Core Features
+
+- 🔍 **Multi-Provider Web Search**: Flexible web search using Google, Bing, or Exa APIs.
+- 📄 **Content Extraction**: Retrieves and processes the full content of web pages using the JinaAI reader service.
+- 📂 **Local Document Parsing**: Extracts text from local DOCX, PDF, and other office documents.
+- 🤖 **Multi-Platform LLM Support**: Integrates with Google Gemini, OpenAI GPT, Anthropic Claude, and local models via Ollama.
+- 🧠 **AI-Powered Workflow**:
+    - **Query Optimization**: Refines a basic topic into an optimized search query and report structure.
+    - **Results Analysis**: Scores and ranks search results for relevance and quality.
+    - **Report Generation**: Creates detailed, structured reports from curated sources.
+    - **Report Consolidation**: Synthesizes multiple reports into a single, comprehensive document.
+- 📤 **Multiple Export Formats**: Generates downloadable reports in PDF, DOCX, and TXT formats.
+
+## Architecture: The Python Toolchain
+
+The original Next.js application has been ported to a powerful, modular Python toolchain located in the `tooling/` directory. This new architecture is designed for backend use and agent-based workflows.
+
+### Key Components:
+
+- **`tooling/deep_research.py`**: The main entry point and orchestrator for the entire toolchain. The `execute_research_protocol` function acts as a high-level dispatcher that calls the appropriate specialized tool.
+
+- **`tooling/ported/`**: This directory contains the individual, specialized tools that were ported from the original application's API routes. Each module handles a specific part of the research workflow:
+    - `search.py`: Performs web searches.
+    - `fetch_content.py`: Fetches content from URLs.
+    - `parse_document.py`: Parses local documents.
+    - `optimize_research.py`: Optimizes the initial research prompt.
+    - `analyze_results.py`: Ranks and analyzes search results.
+    - `consolidate_report.py`: Merges multiple reports.
+    - `generate_final_report.py`: Creates the final, polished report.
+    - `documents.py`: Generates DOCX and PDF files.
+    - `download.py`: Orchestrates the file download process.
+
+- **`tooling/lib/`**: Contains shared library code:
+    - `helpers.py`: Centralized functions for interacting with LLMs and parsing JSON.
+    - `filesystem.py`: Simple helpers for local file I/O.
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20+
-- npm, yarn, pnpm, or bun
+- Python 3.9+
+- `pip` for installing packages
 
 ### Installation
 
-1. Clone the repository:
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/btahir/open-deep-research
+    cd open-deep-research
+    ```
 
-```bash
-git clone https://github.com/btahir/open-deep-research
-cd open-deep-research
+2.  **Install dependencies:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+3.  **Set up Environment Variables:**
+    Create a `.env` file in the root directory and add the necessary API keys for the services you intend to use. You can copy the contents of `env.example` as a template.
+
+    ```env
+    # --- LLM Provider API Keys ---
+    GEMINI_API_KEY="your_gemini_api_key"
+    OPENAI_API_KEY="your_openai_api_key"
+    ANTHROPIC_API_KEY="your_anthropic_api_key"
+
+    # --- Search Provider API Keys ---
+    AZURE_SUB_KEY="your_azure_bing_subscription_key"
+    GOOGLE_SEARCH_API_KEY="your_google_search_api_key"
+    GOOGLE_SEARCH_CX="your_google_search_cx_id"
+    EXA_API_KEY="your_exa_api_key"
+    ```
+    **Note**: You only need to provide API keys for the platforms you plan to use.
+
+### Usage: The Research Orchestrator
+
+The entire toolchain is accessed through the `execute_research_protocol` function in `tooling/deep_research.py`. This function takes a single dictionary argument, `constraints`, which must contain a `task` key. The value of `task` determines which tool is run, and the other keys in the dictionary are passed as arguments to that tool.
+
+**Example: Performing a web search**
+
+```python
+from tooling.deep_research import execute_research_protocol
+import json
+
+search_constraints = {
+    "task": "search",
+    "query": "latest advancements in artificial intelligence",
+    "provider": "google" # or "bing", "exa"
+}
+
+result_json = execute_research_protocol(search_constraints)
+result = json.loads(result_json)
+
+print(result)
 ```
 
-2. Install dependencies:
+**Example: Generating a final report**
 
-```bash
-npm install
-# or
-yarn install
-# or
-pnpm install
-# or
-bun install
+```python
+from tooling.deep_research import execute_research_protocol
+import json
+
+report_constraints = {
+    "task": "generate_final_report",
+    "selected_results": [
+        {"url": "http://example.com/ai-news", "title": "AI News", "content": "..."}
+    ],
+    "sources": [
+        {"id": "src1", "url": "http://example.com/ai-news", "name": "AI News"}
+    ],
+    "prompt": "Create a detailed report on the future of AI.",
+    "platform_model": "openai__gpt-4" # or "google__gemini-flash", etc.
+}
+
+result_json = execute_research_protocol(report_constraints)
+report = json.loads(result_json)
+
+print(report['title'])
+print(report['summary'])
 ```
-
-3. Create a `.env.local` file in the root directory:
-
-```env
-# Google Gemini Pro API key (required for AI report generation)
-GEMINI_API_KEY=your_gemini_api_key
-
-# OpenAI API key (optional - required only if OpenAI models are enabled)
-OPENAI_API_KEY=your_openai_api_key
-
-# Anthropic API key (optional - required only if Anthropic models are enabled)
-ANTHROPIC_API_KEY=your_anthropic_api_key
-
-# DeepSeek API key (optional - required only if DeepSeek models are enabled)
-DEEPSEEK_API_KEY=your_deepseek_api_key
-
-# OpenRouter API Key (Optional - if using OpenRouter as AI platform)
-OPENROUTER_API_KEY="your-openrouter-api-key"
-
-# Upstash Redis (required for rate limiting)
-UPSTASH_REDIS_REST_URL=your_upstash_redis_url
-UPSTASH_REDIS_REST_TOKEN=your_upstash_redis_token
-
-# Bing Search API (Optional - if using Bing as search provider)
-AZURE_SUB_KEY="your-azure-subscription-key"
-
-# Google Custom Search API (Optional - if using Google as search provider)
-GOOGLE_SEARCH_API_KEY="your-google-search-api-key"
-GOOGLE_SEARCH_CX="your-google-search-cx"
-
-# EXA API Key (Optional - if using EXA as search provider)
-EXA_API_KEY="your-exa-api-key"
-```
-
-Note: You only need to provide API keys for the platforms you plan to use. If a platform is enabled in the config but its API key is missing, those models will appear disabled in the UI.
-
-### Running the Application
-
-You can run the application either directly on your machine or using Docker.
-
-#### Option 1: Traditional Setup
-
-1. Start the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-2. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-#### Option 2: Docker Setup
-
-If you prefer using Docker, you can build and run the application in a container after setting up your environment variables:
-
-1. Build the Docker image:
-
-```bash
-docker build -t open-deep-research:v1 .
-```
-
-2. Run the container:
-
-```bash
-docker run -p 3000:3000 open-deep-research
-```
-
-The application will be available at [http://localhost:3000](http://localhost:3000).
 
 ## Agent-Centric Development
 
-This repository is a controlled environment for the self-experimentation and autonomous operation of an AI agent, codenamed "Jules." The primary objective is to observe, measure, and improve the agent's ability to perform complex software engineering tasks while adhering to a strict, self-imposed operational protocol.
+This repository is a controlled environment for the self-experimentation and autonomous operation of an AI agent. The primary objective is to observe, measure, and improve the agent's ability to perform complex software engineering tasks.
 
-### The Agent Protocol (Agent.md)
-
-All operations within this repository are governed by the Jules Agent Protocol v3.0, detailed in `Agent.md`. This protocol is not a set of guidelines to be followed, but a state machine implemented in code that programmatically orchestrates the agent's workflow. It mandates a structured approach to:
-- **Temporal Orientation**: Overcoming knowledge cutoffs by consulting external, up-to-date information.
-- **Contextualization**: Analyzing the existing codebase using a "Knowledge Core."
-- **Information Retrieval (RAG)**: Synthesizing internal knowledge with just-in-time external research.
-- **Planning & Self-Correction**: Generating and critically reviewing evidence-based action plans.
-- **Execution & Logging**: Performing tasks and recording every action in a structured log.
-- **Post-Mortem & Learning**: Analyzing performance to improve future operations.
+The core of the agent's capabilities now resides in the **Python toolchain**. The agent's workflow is orchestrated by `tooling/master_control.py`, which uses the `execute_research_protocol` function as its primary interface for interacting with the world and performing research tasks.
 
 ### Repository Structure
 
-The repository is organized to support the agent's protocol:
-- **Agent.md**: The master protocol document that dictates all agent behavior.
-- **knowledge_core/**: The agent's internal knowledge base.
-- **logs/**: Contains operational logs.
-- **postmortems/**: Contains post-task self-analysis reports.
-- **tooling/**: Contains the FSM-based tooling that enforces the protocol.
-- **run.py**: The entry point for all agent tasks.
+-   **AGENTS.md**: The master protocol document that dictates all agent behavior.
+-   **knowledge_core/**: The agent's internal knowledge base.
+-   **logs/**: Contains operational logs.
+-   **postmortems/**: Contains post-task self-analysis reports.
+-   **tooling/**: Contains the Python-based toolchain, including the FSM and ported tools.
+-   **run.py**: The main entry point for initiating agent tasks.
 
-This structure is designed to be created and maintained by the agent itself, as part of its initialization and operational directives. To initiate a task, use the following command:
-
+To initiate a task for the agent, use the following command:
 ```bash
 python run.py "Your task description here"
 ```
-
-### Getting API Keys
-
-#### Azure Bing Search API
-
-1. Go to [Azure Portal](https://portal.azure.com)
-2. Create a Bing Search resource
-3. Get the subscription key from "Keys and Endpoint"
-
-#### Google Custom Search API
-
-You'll need two components to use Google Custom Search:
-
-1. **Get API Key**:
-
-   - Visit [Get a Key](https://developers.google.com/custom-search/v1/introduction) page
-   - Follow the prompts to get your API key
-   - Copy it for the `GOOGLE_SEARCH_API_KEY` environment variable
-
-2. **Get Search Engine ID (CX)**:
-   - Visit [Programmable Search Engine Control Panel](https://programmablesearchengine.google.com/controlpanel/create)
-   - Create a new search engine
-   - After creation, find your Search Engine ID in the "Overview" page's "Basic" section
-   - Copy the ID (this is the `cx` parameter) for the `GOOGLE_SEARCH_CX` environment variable
-
-#### EXA API Key
-
-1. Visit [EXA Platform](https://exa.ai/)
-2. Sign up or log in to your account
-3. Go to API Keys section
-4. Create a new API key
-
-#### Google Gemini API Key
-
-1. Visit [Google AI Studio](https://makersuite.google.com/app/apikey)
-2. Create an API key
-3. Copy the API key
-
-#### OpenAI API Key
-
-1. Visit [OpenAI Platform](https://platform.openai.com)
-2. Sign up or log in to your account
-3. Go to API Keys section
-4. Create a new API key
-
-#### Anthropic API Key
-
-1. Visit [Anthropic Console](https://console.anthropic.com)
-2. Sign up or log in to your account
-3. Go to API Keys section
-4. Create a new API key
-
-#### DeepSeek API Key
-
-1. Visit [DeepSeek Platform](https://platform.deepseek.com)
-2. Sign up or log in to your account
-3. Go to API Keys section
-4. Create a new API key
-
-#### OpenRouter API Key
-
-1. Visit [OpenRouter Platform](https://openrouter.ai/)
-2. Sign up or log in to your account
-3. Go to API Keys section
-4. Create a new API key
-
-#### Upstash Redis
-
-1. Sign up at [Upstash](https://upstash.com)
-2. Create a new Redis database
-3. Copy the REST URL and REST Token
-
-## Tech Stack
-
-- [Next.js 15](https://nextjs.org/) - React framework
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Tailwind CSS](https://tailwindcss.com/) - Styling
-- [shadcn/ui](https://ui.shadcn.com/) - UI components
-- [JinaAI](https://jina.ai/) - Content extraction
-- [Azure Bing Search](https://www.microsoft.com/en-us/bing/apis/bing-web-search-api) - Web search
-- [Google Custom Search](https://developers.google.com/custom-search/v1/overview) - Web search
-- [Upstash Redis](https://upstash.com/) - Rate limiting
-- [jsPDF](https://github.com/parallax/jsPDF) & [docx](https://github.com/dolanmiu/docx) - Document generation
-
-The app will use the configured provider (default: Google) for all searches. You can switch providers by updating the `provider` value in the config file.
-
-## Demo
-
-Try it out at: [Open Deep Research](https://opendeepresearch.vercel.app/)
 
 ## Contributing
 
@@ -534,14 +155,3 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 ## License
 
 [MIT](https://github.com/btahir/open-deep-research/blob/main/LICENSE)
-
-## Acknowledgments
-
-- Inspired by Google's Gemini Deep Research feature
-- Built with amazing open source tools and APIs
-
-## Follow Me
-
-If you're interested in following all the random projects I'm working on, you can find me on Twitter:
-
-[![Twitter Follow](https://img.shields.io/twitter/follow/deepwhitman?style=social)](https://x.com/deepwhitman)
