@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tooling.ported.consolidate_report import consolidate_report
+from tooling.remote.consolidate_report import consolidate_report
 
 class TestPortedConsolidateReport(unittest.TestCase):
 

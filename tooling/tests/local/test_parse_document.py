@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tooling.ported.parse_document import parse_document
+from tooling.local.parse_document import parse_document
 
 class TestPortedParseDocument(unittest.TestCase):
 

@@ -1,32 +1,40 @@
 import json
 from typing import Dict, Any
 
-# --- Import all the ported tools ---
-from tooling.ported import search as ported_search
-from tooling.ported import fetch_content as ported_fetch_content
-from tooling.ported import parse_document as ported_parse_document
-from tooling.ported import optimize_research as ported_optimize_research
-from tooling.ported import analyze_results as ported_analyze_results
-from tooling.ported import consolidate_report as ported_consolidate_report
-from tooling.ported import generate_final_report as ported_generate_final_report
-from tooling.ported import download as ported_download
+# --- Import all the ported tools from their new locations ---
+from tooling.local import parse_document as local_parse_document
+from tooling.local import documents as local_documents
+from tooling.local import download as local_download
+from tooling.remote import search as remote_search
+from tooling.remote import fetch_content as remote_fetch_content
+from tooling.remote import optimize_research as remote_optimize_research
+from tooling.remote import analyze_results as remote_analyze_results
+from tooling.remote import consolidate_report as remote_consolidate_report
+from tooling.remote import generate_final_report as remote_generate_final_report
+from tooling.remote import generate_question as remote_generate_question
 
-# A mapping from task names to their corresponding functions
+# A mapping from task names to their corresponding functions, now clearly separated
 TASK_DISPATCHER = {
-    "search": ported_search.search,
-    "fetch_content": ported_fetch_content.fetch_content,
-    "parse_document": ported_parse_document.parse_document,
-    "optimize_research": ported_optimize_research.optimize_research,
-    "analyze_results": ported_analyze_results.analyze_results,
-    "consolidate_report": ported_consolidate_report.consolidate_report,
-    "generate_final_report": ported_generate_final_report.generate_final_report,
-    "download_report": ported_download.download_report,
+    # --- Local Tools ---
+    "parse_document": local_parse_document.parse_document,
+    "generate_docx": local_documents.generate_docx,
+    "generate_pdf": local_documents.generate_pdf,
+    "download_report": local_download.download_report,
+
+    # --- Remote Tools ---
+    "search": remote_search.search,
+    "fetch_content": remote_fetch_content.fetch_content,
+    "optimize_research": remote_optimize_research.optimize_research,
+    "analyze_results": remote_analyze_results.analyze_results,
+    "consolidate_report": remote_consolidate_report.consolidate_report,
+    "generate_final_report": remote_generate_final_report.generate_final_report,
+    "generate_question": remote_generate_question.generate_question,
 }
 
 def execute_research_protocol(constraints: Dict[str, Any]) -> str:
     """
     Orchestrates the research workflow by dispatching tasks to the
-    appropriate ported tools.
+    appropriate local or remote tools.
 
     The `constraints` dictionary must contain a 'task' key, which
     determines which tool to run. The rest of the keys in `constraints`
@@ -50,6 +58,12 @@ def execute_research_protocol(constraints: Dict[str, Any]) -> str:
 
     try:
         result = task_function(**task_args)
+        # The download tool returns bytes, which are not directly JSON serializable.
+        # We handle this by not double-encoding the result if it's already a dict with bytes.
+        if task == "download_report" and isinstance(result.get("content"), bytes):
+            # For simplicity in the toolchain, we'll encode bytes to a string for the JSON wrapper.
+            # A more robust system might handle binary data differently.
+            result["content"] = result["content"].decode('latin1')
         return json.dumps(result)
     except Exception as e:
         return json.dumps({"error": f"An error occurred while executing task '{task}': {e}", "status": 500})

@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from tooling.lib.helpers import generate_with_model, extract_and_parse_json
+from tooling.lib.remote_helpers import generate_with_model, extract_and_parse_json
 
 def _create_prompt(prompt: str) -> str:
     """Creates the system prompt for the LLM to optimize a research topic."""

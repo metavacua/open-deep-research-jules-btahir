@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, MagicMock
-from tooling.ported.documents import generate_docx, generate_pdf
+from tooling.local.documents import generate_docx, generate_pdf
 
 class TestPortedDocuments(unittest.TestCase):
 

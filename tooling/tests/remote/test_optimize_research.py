@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tooling.ported.optimize_research import optimize_research
+from tooling.remote.optimize_research import optimize_research
 
 class TestPortedOptimizeResearch(unittest.TestCase):
 

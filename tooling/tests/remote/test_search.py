@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch, Mock
 import os
-from tooling.ported.search import search, get_bing_freshness, get_google_date_restrict
+from tooling.remote.search import search, get_bing_freshness, get_google_date_restrict
 
 class TestPortedSearch(unittest.TestCase):
 

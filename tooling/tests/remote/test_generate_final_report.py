@@ -1,7 +1,7 @@
 import unittest
 import json
 from unittest.mock import patch
-from tooling.ported.generate_final_report import generate_final_report
+from tooling.remote.generate_final_report import generate_final_report
 
 class TestPortedGenerateFinalReport(unittest.TestCase):
 

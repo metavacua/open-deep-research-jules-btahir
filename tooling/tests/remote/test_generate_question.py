@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tooling.ported.generate_question import generate_question
+from tooling.remote.generate_question import generate_question
 
 class TestPortedGenerateQuestion(unittest.TestCase):
 
