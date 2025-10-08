@@ -1,5 +1,5 @@
 from typing import Dict, Any, Tuple
-from tooling.ported.documents import generate_docx, generate_pdf
+from tooling.local.documents import generate_docx, generate_pdf
 
 def _generate_txt(report: Dict[str, Any]) -> bytes:
     """Generates a plain text representation of a report."""

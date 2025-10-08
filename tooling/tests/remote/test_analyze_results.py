@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from tooling.ported.analyze_results import analyze_results
+from tooling.remote.analyze_results import analyze_results
 
 class TestPortedAnalyzeResults(unittest.TestCase):
 
