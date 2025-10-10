@@ -1,5 +1,5 @@
 from typing import Dict, Any, List
-from tooling.lib.helpers import generate_with_model, extract_and_parse_json
+from tooling.lib.remote_helpers import generate_with_model, extract_and_parse_json
 
 def _create_prompt(prompt: str, results: List[Dict[str, Any]]) -> str:
     """Creates the system prompt for the LLM to analyze search results."""

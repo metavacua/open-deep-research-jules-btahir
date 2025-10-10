@@ -1,6 +1,6 @@
 import json
 from typing import Dict, Any, List
-from tooling.lib.helpers import generate_with_model # Reusing the centralized LLM function
+from tooling.lib.remote_helpers import generate_with_model # Reusing the centralized LLM function
 
 def _create_prompt(report: Dict[str, Any]) -> str:
     """Creates the prompt for the LLM to generate search terms."""
