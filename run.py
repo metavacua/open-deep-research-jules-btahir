@@ -5,17 +5,17 @@ import sys
 # Add tooling directory to path to import other tools
 sys.path.insert(0, './tooling')
 from state import AgentState
-from tooling.aooda_orchestrator import AoodaOrchestrator
+from master_control import MasterControlGraph
 
 def main():
     """
     The main entry point for the agent.
 
-    This script initializes the agent's state, runs the A-OODA orchestrator
-    to execute the new protocol, and prints the final result.
+    This script initializes the agent's state, runs the master control graph
+    to enforce the protocol, and prints the final result.
     """
     parser = argparse.ArgumentParser(
-        description="Jules, an extremely skilled software engineer, running on the A-OODA protocol."
+        description="Jules, an extremely skilled software engineer, at your service."
     )
     parser.add_argument(
         "task",
@@ -28,20 +28,16 @@ def main():
 
     # 1. Initialize the agent's state for the new task
     initial_state = AgentState(task=args.task)
-    initial_state.messages.append({
-        "role": "user",
-        "content": f"Initial task received: {args.task}"
-    })
 
-
-    # 2. Initialize and run the A-OODA orchestrator
-    orchestrator = AoodaOrchestrator(initial_state)
-    final_state = orchestrator.run()
+    # 2. Initialize and run the master control graph
+    graph = MasterControlGraph()
+    final_state = graph.run(initial_state)
 
     # 3. Print the final report
-    print("\n\n--- Task Complete ---")
+    print("\n--- Task Complete ---")
+    print(f"Final State: {graph.current_state}")
     if final_state.error:
-        print(f"Finished with an error: {final_state.error}")
+        print(f"Error: {final_state.error}")
     else:
         print("\n--- Final Report ---")
         print(final_state.final_report)
