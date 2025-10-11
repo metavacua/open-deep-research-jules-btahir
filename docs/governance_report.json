@@ -1,0 +1,22 @@
+{
+  "disconnected_tools": [
+    "demonstrate_toolchain.py",
+    "stress_test.py",
+    "tooling/__init__.py",
+    "tooling/dependency_graph_generator.py",
+    "tooling/governance/check_context.py",
+    "tooling/local/documents.py",
+    "tooling/local/download.py",
+    "tooling/local/parse_document.py",
+    "tooling/remote/analyze_results.py",
+    "tooling/remote/consolidate_report.py",
+    "tooling/remote/fetch_content.py",
+    "tooling/remote/generate_final_report.py",
+    "tooling/remote/generate_question.py",
+    "tooling/remote/optimize_research.py",
+    "tooling/remote/search.py",
+    "tooling/self_improvement_cli.py",
+    "tooling/symbol_map_generator.py"
+  ],
+  "technical_debt": []
+}
