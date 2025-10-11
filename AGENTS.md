@@ -33,7 +33,9 @@ All task execution begins with a mandatory orientation cascade. The agent must p
 
 ### Level 2 (L2): Repository State Synchronization (O(n))
 **Objective:** To understand the current state of the immediate, local environment—the project repository.
-**Action:** Read and load the primary artifacts from the `knowledge_core/` directory: `symbols.json`, `dependency_graph.json`, `temporal_orientation.md`, and `lessons_learned.md`. If `lessons_learned.md` does not exist, it must be created.
+**Action:** Read and load the primary artifacts from the `knowledge_core/` and `docs/` directories.
+*   **Core Knowledge:** `knowledge_core/symbols.json`, `knowledge_core/dependency_graph.json`, `knowledge_core/temporal_orientation.md`, `knowledge_core/lessons_learned.md`.
+*   **Architectural Status:** `docs/CODEBASE_MAP.md` and `docs/TECH_DEBT.md`. These documents contain critical, human-generated analysis of the repository's current architecture, known issues, and disconnected components. They MUST be reviewed to gain a complete operational picture.
 **Governing Principle:** *Understand the local environment.* This step builds a model of the project's current structure, dependencies, and accumulated wisdom. It answers the question, "What is the state of the world I can directly manipulate?"
 
 ### Level 3 (L3): Environmental Probing & Targeted RAG (P-Class)
@@ -100,3 +102,4 @@ The `tooling/fdc_cli.py analyze` command classifies plans:
     *   **Action:** This command programmatically executes the L1-L3 AORP orientation cascade, ensuring the agent is fully oriented before proceeding. It logs a formal `TASK_START` event upon successful completion.
 *   **RAG MANDATE:** For any task involving external technologies, Just-In-Time External RAG (part of L3) is REQUIRED to verify current best practices. Do not trust internal knowledge.
 *   **FDC TOOLCHAIN MANDATE:** Use the `fdc_cli.py` tool for all core FDC state transitions: task initiation (`start`), plan linting (`lint`), and task closure (`close`). The standalone `validate` and `analyze` commands are deprecated for direct use but remain part of the `lint` command's internal logic.
+*   **CONTEXT GOVERNANCE MANDATE:** Before generating a plan for any `Construction` modality task, the `tooling/governance/check_context.py` script MUST be executed. The agent must review the generated `docs/governance_report.json` to identify any new disconnected tools or technical debt that may be relevant to the current task.
